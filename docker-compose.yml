@@ -1,0 +1,8 @@
+services:
+  v:
+    image: khalyomede/vlang:latest-alpine
+    entrypoint: v
+    user: root
+    working_dir: /root/app
+    volumes:
+      - .:/root/app
