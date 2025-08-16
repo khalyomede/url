@@ -66,6 +66,7 @@ v install khalyomede.url
   - [Get the host from an URL](#get-the-host-from-an-url)
   - [Get the path from an URL](#get-the-path-from-an-url)
   - [Get a query string by key from an URL](#get-a-query-string-by-key-from-an-url)
+  - [Get the original raw query string](#get-the-raw-original-query-string)
   - [Get the fragment from an URL](#get-the-fragment-from-an-url)
 - Comparing
   - [Compare two URLs are equivalent](#comparing-two-urls-are-equivalent)
@@ -121,17 +122,20 @@ You can perform fine grained error handling if you prefer.
 ```v
 module main
 
-import khalyomede.url { Url, MissingScheme, MissingDomain, TraversingAboveRoot }
+import khalyomede.url { Url, MissingScheme, MissingDomain, TraversingAboveRoot, BadlyEncodedPath, BadlyEncodedFragment, BadlyEncodedQuery }
 
 fn main() {
   url := Url.parse("contact-us") or {
     error_message := match err {
-      MissingScheme { "The scheme is missing (${err})." }
-      MissingDomain { "The domain is missing (${err})." }
-      TraversingAboveRoot { "Trying to go above root (${err})." }
+      MissingScheme { "The scheme is missing" }
+      MissingDomain { "The domain is missing" }
+      TraversingAboveRoot { "Trying to go above root" }
+      BadlyEncodedPath { "The path is not well encoded" }
+      BadlyEncodedFragment { "The fragment is not well encoded" }
+      BadlyEncodedQuery { "The query is not well encoded" }
     }
 
-    panic(error_message)
+    panic(error_message + " (${err}).")
   }
 }
 ```
@@ -292,7 +296,30 @@ fn main() {
 }
 ```
 
-You can find the full list in the source code.
+You can match over all different schemes if you need it:
+
+```v
+module main
+
+import khalyomede.url { Url, Http, Https, Ftp, Ftps, Ssh, Git, File, Other }
+
+fn main() {
+  url := Url.parse("facebook://user/johndoe")
+
+  message := match url.scheme {
+    Http { "Url is HTTP" }
+    Https { "Url is HTTPS" }
+    Ftp { "Url is FTP" }
+    Ftps { "Url is FTPS" }
+    Ssh { "Url is SSH" }
+    Git { "Url is Git" }
+    File { "Url is file" }
+    Other { "Url is other (${url.scheme.value})" }
+  }
+
+  assert message == "Url is other (facebook)"
+}
+```
 
 [back to examples](#examples)
 
@@ -435,6 +462,24 @@ fn main() {
   filter := json.decode(Filter, raw_filter)!
 
   assert filter.name or { "" } == "john"
+}
+```
+
+[back to examples](#examples)
+
+### Get the raw original query string
+
+```v
+module main
+
+import khalyomede.url { Url }
+import net.urllib { query_unescape }
+
+fn main() {
+  link := Url.parse("https://example.com?search=V%20lang")
+
+  assert link.raw_query == "search=V%20lang"
+  assert query_unescape(link.raw_query) == "search=V lang"
 }
 ```
 

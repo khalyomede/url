@@ -1,140 +1,251 @@
 module test
 
-import url { Url, Https, MissingDomain, MissingScheme, TraversingAboveRoot }
+import url { Url, Https, MissingDomain, MissingScheme, TraversingAboveRoot, BadlyEncodedFragment, BadlyEncodedPath, BadlyEncodedQuery }
 
 fn test_it_parses_url_with_domain_and_host() {
-    url := Url.parse("https://example.com")!
+    link := Url.parse("https://example.com")!
 
-    assert url.scheme == Https{}
-    assert url.host == "example.com"
-    assert url.port == none
-    assert url.path == "/"
-    assert url.query == map[string]string{}
-    assert url.fragment == ""
+    assert link.scheme is Https
+    assert link.host == "example.com"
+    assert link.port == none
+    assert link.path == "/"
+    assert link.query == map[string]string{}
+    assert link.fragment == ""
 }
 
 fn test_it_parses_url_with_domain_host_and_port() {
-    url := Url.parse("https://example.com:8080")!
+    link := Url.parse("https://example.com:8080")!
 
-    assert url.scheme == Https{}
-    assert url.host == "example.com"
-    assert url.port == 8080
-    assert url.path == "/"
-    assert url.query == map[string]string{}
-    assert url.fragment == ""
+    assert link.scheme is Https
+    assert link.host == "example.com"
+    assert link.port or { 0 } == 8080
+    assert link.path == "/"
+    assert link.query == map[string]string{}
+    assert link.fragment == ""
 }
 
 fn test_it_parses_url_with_domain_host_and_path() {
-    url := Url.parse("https://example.com/contact-us")!
+    link := Url.parse("https://example.com/contact-us")!
 
-    assert url.scheme == Https{}
-    assert url.host == "example.com"
-    assert url.port == none
-    assert url.path == "/contact-us"
-    assert url.query == map[string]string{}
-    assert url.fragment == ""
+    assert link.scheme is Https
+    assert link.host == "example.com"
+    assert link.port == none
+    assert link.path == "/contact-us"
+    assert link.query == map[string]string{}
+    assert link.fragment == ""
 }
 
 fn test_it_parses_url_with_domain_host_and_multi_level_path() {
-    url := Url.parse("https://example.com/api/v1/users")!
+    link := Url.parse("https://example.com/api/v1/users")!
 
-    assert url.scheme == Https{}
-    assert url.host == "example.com"
-    assert url.port == none
-    assert url.path == "/api/v1/users"
-    assert url.query == map[string]string{}
-    assert url.fragment == ""
+    assert link.scheme is Https
+    assert link.host == "example.com"
+    assert link.port == none
+    assert link.path == "/api/v1/users"
+    assert link.query == map[string]string{}
+    assert link.fragment == ""
 }
 
 fn test_it_parses_url_with_host_domain_and_query() {
-    url := Url.parse("https://example.com?search=query")!
+    link := Url.parse("https://example.com?search=query")!
 
-    assert url.scheme == Https{}
-    assert url.host == "example.com"
-    assert url.port == none
-    assert url.path == "/"
-    assert url.query == map[string]string{"search": "query"}
-    assert url.fragment == ""
+    assert link.scheme is Https
+    assert link.host == "example.com"
+    assert link.port == none
+    assert link.path == "/"
+    assert link.query == {"search": "query"}
+    assert link.fragment == ""
 }
 
 fn test_it_parses_url_with_host_domain_and_fragment() {
-    url := Url.parse("https://example.com#section1")!
+    link := Url.parse("https://example.com#section1")!
 
-    assert url.schemee == Https{}
-    assert url.host == "example.com"
-    assert url.port == none
-    assert url.path == "/"
-    assert url.query == map[string]string{}
-    assert url.fragment == "section1"
+    assert link.scheme is Https  // Fixed typo: was "schemee"
+    assert link.host == "example.com"
+    assert link.port == none
+    assert link.path == "/"
+    assert link.query == map[string]string{}
+    assert link.fragment == "section1"
 }
 
 fn test_it_parses_url_with_host_domain_and_relative_accessor_in_path() {
-    url := Url.parse("https://example.com/settings/../contact")!
+    link := Url.parse("https://example.com/settings/../contact")!
 
-    assert url.scheme == Https{}
-    assert url.host == "example.com"
-    assert url.port == none
-    assert url.path == "/contact"
-    assert url.query == map[string]string{}
-    assert url.fragment == ""
+    assert link.scheme is Https
+    assert link.host == "example.com"
+    assert link.port == none
+    assert link.path == "/contact"
+    assert link.query == map[string]string{}
+    assert link.fragment == ""
 }
 
 fn test_it_parses_url_with_host_domain_and_same_folder_accessor_in_path() {
-    url := Url.parse("https://example.com/settings/./profile")!
+    link := Url.parse("https://example.com/settings/./profile")!
 
-    assert url.scheme == Https{}
-    assert url.host == "example.com"
-    assert url.port == none
-    assert url.path == "/settings/profile"
-    assert url.query == map[string]string{}
-    assert url.fragment == ""
+    assert link.scheme is Https
+    assert link.host == "example.com"
+    assert link.port == none
+    assert link.path == "/settings/profile"
+    assert link.query == map[string]string{}
+    assert link.fragment == ""
 }
 
 fn test_it_parses_url_with_host_domain_and_double_slashes_in_path() {
-    url := Url.parse("https://example.com//settings//profile")!
+    link := Url.parse("https://example.com//settings//profile")!
 
-    assert url.scheme == Https{}
-    assert url.host == "example.com"
-    assert url.port == none
-    assert url.path == "/settings/profile"
-    assert url.query == map[string]string{}
-    assert url.fragment == ""
+    assert link.scheme is Https
+    assert link.host == "example.com"
+    assert link.port == none
+    assert link.path == "/settings/profile"
+    assert link.query == map[string]string{}
+    assert link.fragment == ""
+}
+
+fn test_it_parses_url_with_encoded_path() {
+    link := Url.parse("https://example.com/path+with+spaces")!
+
+    assert link.scheme is Https
+    assert link.host == "example.com"
+    assert link.port == none
+    assert link.path == "/path with spaces"
+    assert link.query == map[string]string{}
+    assert link.fragment == ""
+}
+
+fn test_it_parses_url_with_encoded_query() {
+    link := Url.parse("https://example.com/path?query=hello%20world#section1")!
+
+    assert link.scheme is Https
+    assert link.host == "example.com"
+    assert link.port == none
+    assert link.path == "/path"
+    assert link.query == {"query": "hello world"}
+    assert link.fragment == "section1"
+}
+
+fn test_it_parses_url_with_encoded_fragment() {
+    link := Url.parse("https://example.com/path?query=hello#section%201")!
+
+    assert link.scheme is Https
+    assert link.host == "example.com"
+    assert link.port == none
+    assert link.path == "/path"
+    assert link.query == {"query": "hello"}
+    assert link.fragment == "section 1"
+}
+
+fn test_it_parses_url_with_encoded_query_string() {
+    link := Url.parse("https://example.com/path?query=hello%20world")!
+
+    assert link.scheme is Https
+    assert link.host == "example.com"
+    assert link.port == none
+    assert link.path == "/path"
+    assert link.query == {"query": "hello world"}
+    assert link.fragment == ""
+}
+
+fn test_it_parses_uppercase_scheme() {
+    link := Url.parse("HTTPS://example.com")!
+
+    assert link.scheme is Https
+    assert link.host == "example.com"
+    assert link.port == none
+    assert link.path == "/"
+    assert link.query == map[string]string{}
+    assert link.fragment == ""
+}
+
+fn test_it_parses_uppercase_domain() {
+    link := Url.parse("https://EXAMPLE.COM")!
+
+    assert link.scheme is Https
+    assert link.host == "example.com"
+    assert link.port == none
+    assert link.path == "/"
+    assert link.query == map[string]string{}
+    assert link.fragment == ""
 }
 
 fn test_it_returns_originally_parsed_url() {
-    url := Url.parse("HTTPS://example.com")!
+    link := Url.parse("HTTPS://example.com")!
 
-    assert url.original == "HTTPS://example.com"
-    assert url.scheme == Https{}
-    assert url.host == "example.com"
-    assert url.port == none
-    assert url.path == "/"
-    assert url.query == map[string]string{}
-    assert url.fragment == ""
+    assert link.original_url == "HTTPS://example.com"
+    assert link.scheme is Https
+    assert link.host == "example.com"
+    assert link.port == none
+    assert link.path == "/"
+    assert link.query == map[string]string{}
+    assert link.fragment == ""
+}
+
+fn test_it_returns_originally_parsed_query() {
+    link := Url.parse("https://example.com?search=query")!
+
+    assert link.raw_query == "search=query"
+    assert link.scheme is Https
+    assert link.host == "example.com"
+    assert link.port == none
+    assert link.path == "/"
+    assert link.query == {"search": "query"}
+    assert link.fragment == ""
 }
 
 fn test_it_doesnt_parse_url_when_scheme_is_missing() {
-    url := Url.parse("example.com") or {
-        assert err.str() == "The scheme is missing."
+    Url.parse("example.com") or {
+        assert err.msg() == "The scheme is missing."
         assert err is MissingScheme
+        return
     }
 
     assert false, "Expected invalid URL"
 }
 
 fn test_it_doesnt_parse_url_when_domain_is_missing() {
-    url := Url.parse("https://") or {
-        assert err.str() == "The domain is missing."
+    Url.parse("https://") or {
+        assert err.msg() == "The domain is missing."
         assert err is MissingDomain
+        return
     }
 
     assert false, "Expected invalid URL"
 }
 
 fn test_it_doesnt_parse_url_when_traversing_to_parent_folder() {
-    url := Url.parse("https://example.com/../") or {
-        assert err.str() == "The URL is accessing above the root directory."
+    Url.parse("https://example.com/../") or {
+        assert err.msg() == "The URL is accessing above the root directory."
         assert err is TraversingAboveRoot
+        return
+    }
+
+    assert false, "Expected invalid URL"
+}
+
+fn test_it_doesnt_parse_url_when_path_is_badly_encoded() {
+    Url.parse("https://example.com/path%") or {
+        assert err.msg() == "The path is not well encoded."
+        assert err is BadlyEncodedPath
+        return
+    }
+
+    assert false, "Expected invalid URL"
+}
+
+fn test_it_doesnt_parse_url_when_fragment_is_badly_encoded() {
+    Url.parse("https://example.com#section%") or {
+        assert err.msg() == "The fragment is not well encoded."
+        assert err is BadlyEncodedFragment
+        return
+    }
+
+    assert false, "Expected invalid URL"
+}
+
+fn test_it_doesnt_parse_url_when_query_is_badly_encoded() {
+    Url.parse("https://example.com?query=hello%") or {
+        assert err.msg() == "The query is not well encoded."
+        assert err is BadlyEncodedQuery
+        return
     }
 
     assert false, "Expected invalid URL"
