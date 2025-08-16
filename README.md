@@ -122,7 +122,7 @@ You can perform fine grained error handling if you prefer.
 ```v
 module main
 
-import khalyomede.url { Url, MissingScheme, MissingDomain, TraversingAboveRoot, BadlyEncodedPath, BadlyEncodedFragment, BadlyEncodedQuery }
+import khalyomede.url { Url, MissingScheme, MissingDomain, TraversingAboveRoot, BadlyEncodedPath, BadlyEncodedFragment, BadlyEncodedQuery, MalformedScheme }
 
 fn main() {
   url := Url.parse("contact-us") or {
@@ -133,6 +133,7 @@ fn main() {
       BadlyEncodedPath { "The path is not well encoded" }
       BadlyEncodedFragment { "The fragment is not well encoded" }
       BadlyEncodedQuery { "The query is not well encoded" }
+      MalformedScheme { "The scheme is malformed" }
     }
 
     panic(error_message + " (${err}).")

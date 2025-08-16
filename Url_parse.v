@@ -15,7 +15,7 @@ pub fn Url.parse(raw_url string) !Url {
 
     // Extract and parse scheme
     raw_scheme := raw_url[..scheme_index].to_lower()
-    scheme := parse_scheme(raw_scheme)
+    scheme := parse_scheme(raw_scheme)!
 
     // Start parsing after scheme://
     remaining := raw_url[scheme_index + scheme_separator.len..]

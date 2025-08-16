@@ -1,6 +1,6 @@
 module test
 
-import url { Url, Https, MissingDomain, MissingScheme, TraversingAboveRoot, BadlyEncodedFragment, BadlyEncodedPath, BadlyEncodedQuery }
+import url { Url, Https, MissingDomain, MissingScheme, TraversingAboveRoot, BadlyEncodedFragment, BadlyEncodedPath, BadlyEncodedQuery, MalformedScheme }
 
 fn test_it_parses_url_with_domain_and_host() {
     link := Url.parse("https://example.com")!
@@ -249,4 +249,15 @@ fn test_it_doesnt_parse_url_when_query_is_badly_encoded() {
     }
 
     assert false, "Expected invalid URL"
+}
+
+fn test_it_doesnt_parse_url_with_leading_whitespace() {
+    Url.parse(" https://example.com") or {
+        assert err.msg() == "The scheme is malformed."
+        assert err is MalformedScheme
+
+        return
+    }
+
+    assert false, "Expected to reject URL with leading whitespace"
 }
