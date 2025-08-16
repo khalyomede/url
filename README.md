@@ -8,10 +8,10 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  url := Url.parse("https://example.com/contact?theme=dark#twitter")!
+  link := Url.parse("https://example.com/contact?theme=dark#twitter")!
 
-  assert url.host == "example.com"
-  assert url.path == "/contact"
+  assert link.host == "example.com"
+  assert link.path == "/contact"
 }
 ```
 
@@ -81,7 +81,7 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  url := Url.parse("https://example.com")!
+  link := Url.parse("https://example.com")!
 }
 ```
 
@@ -93,9 +93,9 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  url := Url.parse("https://example.com/contact?subject=Sales%20order")
+  link := Url.parse("https://example.com/contact?subject=Sales%20order")
 
-  assert url.query["subject"] or { "" } == "Sales order"
+  assert link.query["subject"] or { "" } == "Sales order"
 }
 ```
 
@@ -109,7 +109,7 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  url := Url.parse("example.com/contact-us") or {
+  link := Url.parse("example.com/contact-us") or {
     assert err.str() == "The scheme is missing."
 
     panic(err)
@@ -122,10 +122,10 @@ You can perform fine grained error handling if you prefer.
 ```v
 module main
 
-import khalyomede.url { Url, MissingScheme, MissingDomain, TraversingAboveRoot, BadlyEncodedPath, BadlyEncodedFragment, BadlyEncodedQuery, MalformedScheme }
+import khalyomede.url { Url, MissingScheme, MissingDomain, TraversingAboveRoot, BadlyEncodedPath, BadlyEncodedFragment, BadlyEncodedQuery }
 
 fn main() {
-  url := Url.parse("contact-us") or {
+  link := Url.parse("contact-us") or {
     error_message := match err {
       MissingScheme { "The scheme is missing" }
       MissingDomain { "The domain is missing" }
@@ -133,7 +133,6 @@ fn main() {
       BadlyEncodedPath { "The path is not well encoded" }
       BadlyEncodedFragment { "The fragment is not well encoded" }
       BadlyEncodedQuery { "The query is not well encoded" }
-      MalformedScheme { "The scheme is malformed" }
     }
 
     panic(error_message + " (${err}).")
@@ -149,9 +148,9 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  url := Url.parse("https://example.com/user/1/../create")!
+  link := Url.parse("https://example.com/user/1/../create")!
 
-  assert url.str() == "https://example.com/user/create"
+  assert link.str() == "https://example.com/user/create"
 }
 ```
 
@@ -163,9 +162,9 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  url := Url.parse("https://example.com/user//create//")!
+  link := Url.parse("https://example.com/user//create//")!
 
-  assert url.str() == "https://example.com/user/create/"
+  assert link.str() == "https://example.com/user/create/"
 }
 ```
 
@@ -177,9 +176,9 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  url := Url.parse("https://example.com/settings/")
+  link := Url.parse("https://example.com/settings/")
 
-  assert url.str() == "https://example.com/settings"
+  assert link.str() == "https://example.com/settings"
 }
 ```
 
@@ -189,10 +188,10 @@ Lastly, you can get the originally parsed url.
 module main
 
 fn main() {
-  url := Url.parse("HTTPS://example.com");
+  link := Url.parse("HTTPS://example.com");
 
-  assert url.str() == "https://example.com"
-  assert url.original == "HTTPS://example.com"
+  assert link.str() == "https://example.com"
+  assert link.original == "HTTPS://example.com"
 }
 ```
 
@@ -208,7 +207,7 @@ module main
 import khalyomede.url { Url, Https }
 
 fn main() {
-  url := Url{
+  link := Url{
     scheme: Https{}
     domain: "example.com"
   }
@@ -223,7 +222,7 @@ module main
 import khalyomede.url { Url, Https }
 
 fn main() {
-  url := Url{
+  link := Url{
     scheme: Https{}
     domain: "example.com"
     path: "contact-us"
@@ -235,7 +234,7 @@ fn main() {
     fragment: "whatsapp"
   }
 
-  assert url.str() == "https://example.com/contact-us?lang=fr&theme=dark#whatsapp"
+  assert link.str() == "https://example.com/contact-us?lang=fr&theme=dark#whatsapp"
 }
 ```
 
@@ -247,19 +246,19 @@ module main
 import khalyomede.url { Url, Https }
 
 fn main() {
-  mut url := Url{
+  mut link := Url{
     scheme: Https{}
     domain: "example.com"
   }
 
-  url = Url{
-    ...url
+  link = Url{
+    ...link
     query: {
       lang: "es"
     }
   }
 
-  assert url.query["lang"] or { "en" } == "es"
+  assert link.query["lang"] or { "en" } == "es"
 }
 ```
 
@@ -275,10 +274,10 @@ module main
 import khalyomede.url { Url, Https }
 
 fn main() {
-  url := Url.parse("https://example.com")
+  link := Url.parse("https://example.com")
 
-  assert url.scheme == Https{}
-  assert url.scheme.str() == "https"
+  assert link.scheme == Https{}
+  assert link.scheme.str() == "https"
 }
 ```
 
@@ -290,10 +289,10 @@ module main
 import khalyomede.url { Url, Other }
 
 fn main() {
-  url := Url.parse("facebook://user/johndoe")
+  link := Url.parse("facebook://user/johndoe")
 
-  assert url.scheme == Other{ value: "facebook" }
-  assert url.scheme.str() == "facebook"
+  assert link.scheme == Other{ value: "facebook" }
+  assert link.scheme.str() == "facebook"
 }
 ```
 
@@ -305,9 +304,9 @@ module main
 import khalyomede.url { Url, Http, Https, Ftp, Ftps, Ssh, Git, File, Other }
 
 fn main() {
-  url := Url.parse("facebook://user/johndoe")
+  link := Url.parse("facebook://user/johndoe")
 
-  message := match url.scheme {
+  message := match link.scheme {
     Http { "Url is HTTP" }
     Https { "Url is HTTPS" }
     Ftp { "Url is FTP" }
@@ -315,7 +314,7 @@ fn main() {
     Ssh { "Url is SSH" }
     Git { "Url is Git" }
     File { "Url is file" }
-    Other { "Url is other (${url.scheme.value})" }
+    Other { "Url is other (${link.scheme.value})" }
   }
 
   assert message == "Url is other (facebook)"
@@ -332,9 +331,9 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  url := Url.parse("http://localhost:1234");
+  link := Url.parse("http://localhost:1234");
 
-  assert url.port or { 80 } == 1234
+  assert link.port or { 80 } == 1234
 }
 ```
 
@@ -346,9 +345,9 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  url := Url.parse("https://example.com");
+  link := Url.parse("https://example.com");
 
-  assert url.port or { 80 } == 80
+  assert link.port or { 80 } == 80
 }
 ```
 
@@ -362,9 +361,9 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  url := Url.parse("https://example.com")
+  link := Url.parse("https://example.com")
 
-  assert url.host == "example.com"
+  assert lunk.host == "example.com"
 }
 ```
 
@@ -378,9 +377,9 @@ module import
 import khalyomede.url { Url }
 
 fn main() {
-  url := Url.parse("https://example.com/settings/notifications");
+  link := Url.parse("https://example.com/settings/notifications");
 
-  assert url.path == "/settings/notifications"
+  assert link.path == "/settings/notifications"
 }
 ```
 
@@ -392,9 +391,9 @@ module import
 import khalyomede.url { Url }
 
 fn main() {
-  url := Url.parse("https://example.com/contact?lang=fr#slack");
+  link := Url.parse("https://example.com/contact?lang=fr#slack");
 
-  assert url.path == "/contact"
+  assert link.path == "/contact"
 }
 ```
 
@@ -406,9 +405,9 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  url := Url.parse("https://example.com");
+  link := Url.parse("https://example.com");
 
-  assert url.path == "/"
+  assert link.path == "/"
 }
 ```
 
@@ -422,9 +421,9 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  url := Url.parse("https://example.com?lang=fr");
+  link := Url.parse("https://example.com?lang=fr");
 
-  assert url.query["lang"] or { "en" } == "fr"
+  assert link.query["lang"] or { "en" } == "fr"
 }
 ```
 
@@ -436,9 +435,9 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  url := Url.parse("https://example.com?lang=fr&lang=en");
+  link := Url.parse("https://example.com?lang=fr&lang=en");
 
-  assert url.query["lang"] or { "en" } == "en"
+  assert link.query["lang"] or { "en" } == "en"
 }
 ```
 
@@ -457,9 +456,9 @@ struct Filter {
 }
 
 fn main() {
-  url := Url.parse('https://example.com/users?filter={"name":"john"}')
+  link := Url.parse('https://example.com/users?filter={"name":"john"}')
 
-  raw_filter := url.query["filter"] or { '{}' }
+  raw_filter := link.query["filter"] or { '{}' }
   filter := json.decode(Filter, raw_filter)!
 
   assert filter.name or { "" } == "john"
@@ -492,9 +491,9 @@ fn main() {
 module main
 
 fn main() {
-  url := Url.parse("https://example.com/contact#whatsapp");
+  link := Url.parse("https://example.com/contact#whatsapp");
 
-  assert url.fragment == "whatsapp"
+  assert link.fragment == "whatsapp"
 }
 ```
 
@@ -516,10 +515,10 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  first_url := Url.parse("https://example.com:443");
-  second_url := Url.parse("HTTPS://example.com");
+  first_link := Url.parse("https://example.com:443");
+  second_link := Url.parse("HTTPS://example.com");
 
-  assert first_url.is_equivalent_to(second_url)
+  assert first_link.is_equivalent_to(second_link)
 }
 ```
 
@@ -533,7 +532,7 @@ module main
 import khalyomede.url { Url, Https }
 
 fn main() {
-  url := Url{
+  link := Url{
     scheme: Https{}
     domain: "example.com"
     path: "contact"
@@ -542,6 +541,6 @@ fn main() {
     }
   }
 
-  assert url.str() == "https://example.com/contact?subject=Sales%20order"
+  assert link.str() == "https://example.com/contact?subject=Sales%20order"
 }
 ```
