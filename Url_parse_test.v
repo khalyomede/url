@@ -283,3 +283,12 @@ fn test_it_doesnt_parse_url_when_query_is_badly_encoded() {
 
     assert false, "Expected invalid URL"
 }
+
+fn test_it_doesnt_parses_url_with_backslash_as_scheme_separator() {
+    Url.parse("https:\\example.com") or {
+        assert err is MissingScheme
+        return
+    }
+
+    assert false, "Expected to reject backslash separator"
+}
