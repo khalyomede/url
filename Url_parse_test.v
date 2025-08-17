@@ -189,6 +189,17 @@ fn test_it_parses_url_with_domain_with_ending_space() {
     assert link.fragment == ""
 }
 
+fn test_it_parses_url_with_domain_containing_iso_characters() {
+    link := Url.parse("https://münchen.de")!
+
+    assert link.scheme is Https
+    assert link.host == "münchen.de"
+    assert link.port == none
+    assert link.path == "/"
+    assert link.query == map[string]string{}
+    assert link.fragment == ""
+}
+
 fn test_it_returns_originally_parsed_url() {
     link := Url.parse("HTTPS://example.com")!
 
