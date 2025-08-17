@@ -224,6 +224,32 @@ fn test_it_returns_originally_parsed_query() {
     assert link.fragment == ""
 }
 
+fn test_it_handles_empty_query_values() {
+    link := Url.parse("https://example.com?key=&other=value")!
+
+    assert link.query["key"] or { "default" } == ""
+    assert link.query["other"] or { "default" } == "value"
+}
+
+fn test_it_handles_query_without_value() {
+    link := Url.parse("https://example.com?flag&key=value")!
+
+    assert link.query["flag"] or { "missing" } == ""
+}
+
+fn test_it_handles_double_encoded_content() {
+    link := Url.parse("https://example.com/path?q=%2520test")! // %20 encoded as %2520
+
+    assert link.query["q"] or { "" } == "%20test"
+}
+
+fn test_it_reencode_query_using_uppercase_percent_encoding() {
+    link := Url.parse("https://example.com/path?q=hello%2aworld")!
+
+    assert link.query["q"] or { "" } == "hello*world"
+    assert link.str() == "https://example.com/path?q=hello%2Aworld"
+}
+
 fn test_it_doesnt_parse_url_when_scheme_is_missing() {
     Url.parse("example.com") or {
         assert err.msg() == "The scheme is missing."
