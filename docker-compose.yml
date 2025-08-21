@@ -6,3 +6,4 @@ services:
     working_dir: /root/app
     volumes:
       - .:/root/app
+      - ./docker-data/vlang/.vmodules:/root/.vmodules
