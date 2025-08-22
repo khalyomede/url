@@ -9,6 +9,7 @@ fn test_it_parses_url_with_domain_and_host() {
     assert link.host == "example.com"
     assert link.port == none
     assert link.path == "/"
+    assert link.segments == []
     assert link.query == map[string]string{}
     assert link.fragment == ""
 }
@@ -20,6 +21,7 @@ fn test_it_parses_url_with_domain_host_and_port() {
     assert link.host == "example.com"
     assert link.port or { 0 } == 8080
     assert link.path == "/"
+    assert link.segments == []
     assert link.query == map[string]string{}
     assert link.fragment == ""
 }
@@ -31,6 +33,7 @@ fn test_it_parses_url_with_domain_host_and_path() {
     assert link.host == "example.com"
     assert link.port == none
     assert link.path == "/contact-us"
+    assert link.segments == ["contact-us"]
     assert link.query == map[string]string{}
     assert link.fragment == ""
 }
@@ -42,6 +45,7 @@ fn test_it_parses_url_with_domain_host_and_multi_level_path() {
     assert link.host == "example.com"
     assert link.port == none
     assert link.path == "/api/v1/users"
+    assert link.segments == ["api", "v1", "users"]
     assert link.query == map[string]string{}
     assert link.fragment == ""
 }
@@ -75,6 +79,7 @@ fn test_it_parses_url_with_host_domain_and_relative_accessor_in_path() {
     assert link.host == "example.com"
     assert link.port == none
     assert link.path == "/contact"
+    assert link.segments == ["contact"]
     assert link.query == map[string]string{}
     assert link.fragment == ""
 }
@@ -86,6 +91,7 @@ fn test_it_parses_url_with_host_domain_and_same_folder_accessor_in_path() {
     assert link.host == "example.com"
     assert link.port == none
     assert link.path == "/settings/profile"
+    assert link.segments == ["settings", "profile"]
     assert link.query == map[string]string{}
     assert link.fragment == ""
 }
@@ -97,6 +103,7 @@ fn test_it_parses_url_with_host_domain_and_double_slashes_in_path() {
     assert link.host == "example.com"
     assert link.port == none
     assert link.path == "/settings/profile"
+    assert link.segments == ["settings", "profile"]
     assert link.query == map[string]string{}
     assert link.fragment == ""
 }
@@ -108,6 +115,7 @@ fn test_it_parses_url_with_encoded_path() {
     assert link.host == "example.com"
     assert link.port == none
     assert link.path == "/path with spaces"
+    assert link.segments == ["path with spaces"]
     assert link.query == map[string]string{}
     assert link.fragment == ""
 }
@@ -119,6 +127,7 @@ fn test_it_parses_url_with_encoded_query() {
     assert link.host == "example.com"
     assert link.port == none
     assert link.path == "/path"
+    assert link.segments == ["path"]
     assert link.query == {"query": "hello world"}
     assert link.fragment == "section1"
 }
@@ -130,6 +139,7 @@ fn test_it_parses_url_with_encoded_fragment() {
     assert link.host == "example.com"
     assert link.port == none
     assert link.path == "/path"
+    assert link.segments == ["path"]
     assert link.query == {"query": "hello"}
     assert link.fragment == "section 1"
 }
@@ -141,6 +151,7 @@ fn test_it_parses_url_with_encoded_query_string() {
     assert link.host == "example.com"
     assert link.port == none
     assert link.path == "/path"
+    assert link.segments == ["path"]
     assert link.query == {"query": "hello world"}
     assert link.fragment == ""
 }
@@ -152,6 +163,7 @@ fn test_it_parses_uppercase_scheme() {
     assert link.host == "example.com"
     assert link.port == none
     assert link.path == "/"
+    assert link.segments == []
     assert link.query == map[string]string{}
     assert link.fragment == ""
 }
@@ -163,6 +175,7 @@ fn test_it_parses_uppercase_domain() {
     assert link.host == "example.com"
     assert link.port == none
     assert link.path == "/"
+    assert link.segments == []
     assert link.query == map[string]string{}
     assert link.fragment == ""
 }
@@ -174,6 +187,7 @@ fn test_it_parses_url_with_scheme_with_leading_space() {
     assert link.host == "example.com"
     assert link.port == none
     assert link.path == "/"
+    assert link.segments == []
     assert link.query == map[string]string{}
     assert link.fragment == ""
 }
@@ -185,6 +199,7 @@ fn test_it_parses_url_with_domain_with_ending_space() {
     assert link.host == "example.com"
     assert link.port == none
     assert link.path == "/"
+    assert link.segments == []
     assert link.query == map[string]string{}
     assert link.fragment == ""
 }
@@ -196,6 +211,7 @@ fn test_it_parses_url_with_domain_containing_iso_characters() {
     assert link.host == "münchen.de"
     assert link.port == none
     assert link.path == "/"
+    assert link.segments == []
     assert link.query == map[string]string{}
     assert link.fragment == ""
 }
@@ -208,6 +224,7 @@ fn test_it_returns_originally_parsed_url() {
     assert link.host == "example.com"
     assert link.port == none
     assert link.path == "/"
+    assert link.segments == []
     assert link.query == map[string]string{}
     assert link.fragment == ""
 }
@@ -220,6 +237,7 @@ fn test_it_returns_originally_parsed_query() {
     assert link.host == "example.com"
     assert link.port == none
     assert link.path == "/"
+    assert link.segments == []
     assert link.query == {"search": "query"}
     assert link.fragment == ""
 }

@@ -7,7 +7,7 @@ import url { Url, Https }
 fn test_it_returns_url_without_trailing_spaces() {
     mut fake := Faker{}
     domain := fake.top_level_domain()
-    full_url := "https://${domain}.com/"
+    full_url := "https://${domain}.com"
 
     link := Url.parse(" ${full_url} ")!
 
@@ -64,7 +64,7 @@ fn test_it_returns_url_with_multi_level_paths() {
     link := Url{
         scheme: Https{}
         host: "${fake.top_level_domain()}.com"
-        path: "${path1}/${path2}"
+        segments: [path1, path2]
     }
 
     expect(link.str()).to_be_equal_to("https://${link.host}/${path1}/${path2}")

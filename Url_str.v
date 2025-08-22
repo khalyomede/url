@@ -9,9 +9,8 @@ pub fn (link Url) str() string {
         result += ":${link.port}"
     }
 
-    if link.path != "" {
-        result += "/" + link.path
-            .split("/")
+    if link.segments.len > 0 {
+        result += "/" + link.segments
             .filter(it.trim_space().len > 0)
             .map(query_escape(it))
             .join("/")

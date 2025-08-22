@@ -225,7 +225,7 @@ fn main() {
   link := Url{
     scheme: Https{}
     domain: "example.com"
-    path: "contact-us"
+    segments: ["contact-us"]
     port: 8080 // port is a ?u16
     query: {
       "lang": "fr"
@@ -380,6 +380,7 @@ fn main() {
   link := Url.parse("https://example.com/settings/notifications");
 
   assert link.path == "/settings/notifications"
+  assert link.segments == ["settings", "notifications"]
 }
 ```
 
@@ -408,6 +409,7 @@ fn main() {
   link := Url.parse("https://example.com");
 
   assert link.path == "/"
+  assert link.segments == []
 }
 ```
 

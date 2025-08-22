@@ -75,6 +75,7 @@ pub fn Url.parse(raw_url string) !Url {
     mut query := map[string]string{}
     mut raw_query := ''
     mut fragment := ''
+    mut segments := []string{}
 
     if rest.len > 0 {
         mut path_end := rest.len
@@ -105,6 +106,8 @@ pub fn Url.parse(raw_url string) !Url {
             }
 
             path = normalize_path(decoded_path)!
+
+            segments = path.split('/').filter(it.trim_space().len > 0)
         }
 
         // Extract query
@@ -135,6 +138,7 @@ pub fn Url.parse(raw_url string) !Url {
         host: host
         port: port
         path: path
+        segments: segments
         query: query
         raw_query: raw_query
         fragment: fragment

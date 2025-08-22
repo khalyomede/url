@@ -6,6 +6,7 @@ pub struct Url {
         host string
         port ?u16
         path string
+        segments []string
         query map[string]string
         fragment string
         original_url string
