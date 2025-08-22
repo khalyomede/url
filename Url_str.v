@@ -1,6 +1,6 @@
 module url
 
-import net.urllib { query_escape }
+import net.urllib { query_escape, path_escape }
 
 pub fn (link Url) str() string {
     mut result := "${link.scheme.str()}://${link.host}".to_lower()
@@ -12,7 +12,7 @@ pub fn (link Url) str() string {
     if link.segments.len > 0 {
         result += "/" + link.segments
             .filter(it.trim_space().len > 0)
-            .map(query_escape(it))
+            .map(path_escape(it))
             .join("/")
     }
 
@@ -27,7 +27,7 @@ pub fn (link Url) str() string {
     }
 
     if link.fragment != "" {
-        result += "#${query_escape(link.fragment)}"
+        result += "#${path_escape(link.fragment)}"
     }
 
     return result

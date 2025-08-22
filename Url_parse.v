@@ -1,6 +1,6 @@
 module url
 
-import net.urllib { query_unescape }
+import net.urllib { query_unescape, path_unescape }
 
 pub fn Url.parse(raw_url string) !Url {
     // Check if scheme exists
@@ -101,7 +101,7 @@ pub fn Url.parse(raw_url string) !Url {
         if path_end > 0 {
             raw_path := rest[..path_end]
 
-            decoded_path := query_unescape(raw_path) or {
+            decoded_path := path_unescape(raw_path) or {
                 return BadlyEncodedPath{}
             }
 
@@ -127,7 +127,7 @@ pub fn Url.parse(raw_url string) !Url {
 
         // Extract fragment
         if fragment_start >= 0 {
-            fragment = query_unescape(rest[fragment_start + 1..]) or {
+            fragment = path_unescape(rest[fragment_start + 1..]) or {
                 return BadlyEncodedFragment{}
             }
         }

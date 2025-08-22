@@ -109,7 +109,7 @@ fn test_it_parses_url_with_host_domain_and_double_slashes_in_path() {
 }
 
 fn test_it_parses_url_with_encoded_path() {
-    link := Url.parse("https://example.com/path+with+spaces")!
+    link := Url.parse("https://example.com/path%20with%20spaces")!
 
     assert link.scheme is Https
     assert link.host == "example.com"
@@ -335,4 +335,18 @@ fn test_it_doesnt_parses_url_with_backslash_as_scheme_separator() {
     }
 
     assert false, "Expected to reject backslash separator"
+}
+
+fn test_it_decode_url_and_encodes_it_when_casted_to_string() {
+    original := "https://example.com/path%20with%20spaces?query=hello+world#section%201"
+    link := Url.parse(original)!
+
+    assert link.scheme is Https
+    assert link.host == "example.com"
+    assert link.port == none
+    assert link.path == "/path with spaces"
+    assert link.segments == ["path with spaces"]
+    assert link.query == {"query": "hello world"}
+    assert link.fragment == "section 1"
+    assert link.str() == original
 }
