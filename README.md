@@ -501,6 +501,25 @@ fn main() {
 
 [back to examples](#examples)
 
+### Compare two URLs are equivalent
+
+Just parse your two URLs and cast them to string then perform equality.
+
+```v
+module main
+
+import khalyomede.url { Url }
+
+fn main() {
+  first_url := Url.parse("HTTPS://example.com")
+  second_url := Url.parse("https://example.com/")
+
+  assert first_url.str() == second_url.str()
+}
+```
+
+[back to examples](#examples)
+
 ### Compare two URLs are equivalent
 
 Comparing two `url` by casting them to string may lead to false positives.
@@ -543,6 +562,6 @@ fn main() {
     }
   }
 
-  assert link.str() == "https://example.com/contact?subject=Sales%20order"
+  assert link.str() == "https://example.com/contact?subject=Sales+order"
 }
 ```
