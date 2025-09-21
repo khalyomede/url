@@ -30,7 +30,7 @@ It can be used for a wide range of use cases, such as generating valid URLs give
 
 [back to summary](#summary)
 
-## Features
+## Features
 
 - Can parse an URL
 - Can generate an URL
@@ -40,7 +40,7 @@ It can be used for a wide range of use cases, such as generating valid URLs give
 
 [back to summary](#summary)
 
-## Installation
+## Installation
 
 - [Using V installer](#using-v-installer)
 
@@ -197,7 +197,7 @@ fn main() {
 
 [back to examples](#examples)
 
-### Create a new URL
+### Create a new URL
 
 You need to specify at least the scheme and domain when creating a new URL.
 
@@ -323,7 +323,7 @@ fn main() {
 
 [back to examples](#examples)
 
-### Get the port from an URL
+### Get the port from an URL
 
 ```v
 module main
