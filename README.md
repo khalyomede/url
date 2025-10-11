@@ -48,7 +48,7 @@ It can be used for a wide range of use cases, such as generating valid URLs give
 
 In your terminal, run this command:
 
-```v
+```bash
 v install khalyomede.url
 ```
 
@@ -69,7 +69,7 @@ v install khalyomede.url
   - [Get the original raw query string](#get-the-raw-original-query-string)
   - [Get the fragment from an URL](#get-the-fragment-from-an-url)
 - Comparing
-  - [Compare two URLs are equivalent](#comparing-two-urls-are-equivalent)
+  - [Compare two URLs are equivalent](#compare-two-urls-are-equivalent)
 - Casting
   - [Rendering your Url as a string](#rendering-your-url-as-a-string)
 
@@ -93,7 +93,7 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  link := Url.parse("https://example.com/contact?subject=Sales%20order")
+  link := Url.parse("https://example.com/contact?subject=Sales%20order")!
 
   assert link.query["subject"] or { "" } == "Sales order"
 }
@@ -162,13 +162,13 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  link := Url.parse("https://example.com/user//create//")!
+  link := Url.parse("https://example.com/user//create")!
 
-  assert link.str() == "https://example.com/user/create/"
+  assert link.str() == "https://example.com/user/create"
 }
 ```
 
-This library automatically strips any ending slashes, for consistancy.
+This library automatically strips any ending slashes on paths (but not on the root path), for consistency.
 
 ```v
 module main
@@ -176,9 +176,9 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  link := Url.parse("https://example.com/settings/")
+  link := Url.parse("https://example.com/settings/")!
 
-  assert link.str() == "https://example.com/settings"
+  assert link.path == "/settings"
 }
 ```
 
@@ -187,11 +187,13 @@ Lastly, you can get the originally parsed url.
 ```v
 module main
 
+import khalyomede.url { Url }
+
 fn main() {
-  link := Url.parse("HTTPS://example.com");
+  link := Url.parse("HTTPS://example.com")!
 
   assert link.str() == "https://example.com"
-  assert link.original == "HTTPS://example.com"
+  assert link.original_url == "HTTPS://example.com"
 }
 ```
 
@@ -209,12 +211,12 @@ import khalyomede.url { Url, Https }
 fn main() {
   link := Url{
     scheme: Https{}
-    domain: "example.com"
+    host: "example.com"
   }
 }
 ```
 
-You are free to specify more information if want.
+You are free to specify more information if you want.
 
 ```v
 module main
@@ -224,7 +226,7 @@ import khalyomede.url { Url, Https }
 fn main() {
   link := Url{
     scheme: Https{}
-    domain: "example.com"
+    host: "example.com"
     segments: ["contact-us"]
     port: 8080 // port is a ?u16
     query: {
@@ -248,13 +250,13 @@ import khalyomede.url { Url, Https }
 fn main() {
   mut link := Url{
     scheme: Https{}
-    domain: "example.com"
+    host: "example.com"
   }
 
   link = Url{
     ...link
     query: {
-      lang: "es"
+      "lang": "es"
     }
   }
 
@@ -274,7 +276,7 @@ module main
 import khalyomede.url { Url, Https }
 
 fn main() {
-  link := Url.parse("https://example.com")
+  link := Url.parse("https://example.com")!
 
   assert link.scheme == Https{}
   assert link.scheme.str() == "https"
@@ -289,7 +291,7 @@ module main
 import khalyomede.url { Url, Other }
 
 fn main() {
-  link := Url.parse("facebook://user/johndoe")
+  link := Url.parse("facebook://user/johndoe")!
 
   assert link.scheme == Other{ value: "facebook" }
   assert link.scheme.str() == "facebook"
@@ -304,7 +306,7 @@ module main
 import khalyomede.url { Url, Http, Https, Ftp, Ftps, Ssh, Git, File, Other }
 
 fn main() {
-  link := Url.parse("facebook://user/johndoe")
+  link := Url.parse("facebook://user/johndoe")!
 
   message := match link.scheme {
     Http { "Url is HTTP" }
@@ -331,7 +333,7 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  link := Url.parse("http://localhost:1234");
+  link := Url.parse("http://localhost:1234")!
 
   assert link.port or { 80 } == 1234
 }
@@ -345,7 +347,7 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  link := Url.parse("https://example.com");
+  link := Url.parse("https://example.com")!
 
   assert link.port or { 80 } == 80
 }
@@ -361,7 +363,7 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  link := Url.parse("https://example.com")
+  link := Url.parse("https://example.com")!
 
   assert link.host == "example.com"
 }
@@ -372,12 +374,12 @@ fn main() {
 ### Get the path from an URL
 
 ```v
-module import
+module main
 
 import khalyomede.url { Url }
 
 fn main() {
-  link := Url.parse("https://example.com/settings/notifications");
+  link := Url.parse("https://example.com/settings/notifications")!
 
   assert link.path == "/settings/notifications"
   assert link.segments == ["settings", "notifications"]
@@ -387,12 +389,12 @@ fn main() {
 Note that query strings and fragments are ignored.
 
 ```v
-module import
+module main
 
 import khalyomede.url { Url }
 
 fn main() {
-  link := Url.parse("https://example.com/contact?lang=fr#slack");
+  link := Url.parse("https://example.com/contact?lang=fr#slack")!
 
   assert link.path == "/contact"
 }
@@ -406,7 +408,7 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  link := Url.parse("https://example.com");
+  link := Url.parse("https://example.com")!
 
   assert link.path == "/"
   assert link.segments == []
@@ -423,7 +425,7 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  link := Url.parse("https://example.com?lang=fr");
+  link := Url.parse("https://example.com?lang=fr")!
 
   assert link.query["lang"] or { "en" } == "fr"
 }
@@ -437,7 +439,7 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  link := Url.parse("https://example.com?lang=fr&lang=en");
+  link := Url.parse("https://example.com?lang=fr&lang=en")!
 
   assert link.query["lang"] or { "en" } == "en"
 }
@@ -458,7 +460,7 @@ struct Filter {
 }
 
 fn main() {
-  link := Url.parse('https://example.com/users?filter={"name":"john"}')
+  link := Url.parse('https://example.com/users?filter={"name":"john"}')!
 
   raw_filter := link.query["filter"] or { '{}' }
   filter := json.decode(Filter, raw_filter)!
@@ -478,10 +480,10 @@ import khalyomede.url { Url }
 import net.urllib { query_unescape }
 
 fn main() {
-  link := Url.parse("https://example.com?search=V%20lang")
+  link := Url.parse("https://example.com?search=V%20lang")!
 
   assert link.raw_query == "search=V%20lang"
-  assert query_unescape(link.raw_query) == "search=V lang"
+  assert query_unescape(link.raw_query)! == "search=V lang"
 }
 ```
 
@@ -492,8 +494,10 @@ fn main() {
 ```v
 module main
 
+import khalyomede.url { Url }
+
 fn main() {
-  link := Url.parse("https://example.com/contact#whatsapp");
+  link := Url.parse("https://example.com/contact#whatsapp")!
 
   assert link.fragment == "whatsapp"
 }
@@ -511,37 +515,16 @@ module main
 import khalyomede.url { Url }
 
 fn main() {
-  first_url := Url.parse("HTTPS://example.com")
-  second_url := Url.parse("https://example.com/")
+  first_url := Url.parse("HTTPS://example.com")!
+  second_url := Url.parse("https://example.com")!
 
   assert first_url.str() == second_url.str()
 }
 ```
 
+Note: This performs a normalized comparison since both URLs are converted to lowercase and paths are normalized. However, this may not handle all edge cases (like default ports). For those cases, you would need to manually compare the components or implement a dedicated comparison method.
+
 [back to examples](#examples)
-
-### Compare two URLs are equivalent
-
-Comparing two `url` by casting them to string may lead to false positives.
-
-In one hand, consider cases when the scheme is one time in uppercase, another time in lowercase.
-
-In another hand, think about scheme default ports. For example, you may have one time an URL that specify the port (https://example.com:443/contact-us) and another time no (https://example.com/contact-us). In this case they are also equivalent, since HTTPS default port is 443.
-
-For handling these edge cases, you can use this method.
-
-```v
-module main
-
-import khalyomede.url { Url }
-
-fn main() {
-  first_link := Url.parse("https://example.com:443");
-  second_link := Url.parse("HTTPS://example.com");
-
-  assert first_link.is_equivalent_to(second_link)
-}
-```
 
 ### Rendering your Url as a string
 
@@ -555,8 +538,8 @@ import khalyomede.url { Url, Https }
 fn main() {
   link := Url{
     scheme: Https{}
-    domain: "example.com"
-    path: "contact"
+    host: "example.com"
+    segments: ["contact"]
     query: {
       "subject": "Sales order"
     }
@@ -565,3 +548,5 @@ fn main() {
   assert link.str() == "https://example.com/contact?subject=Sales+order"
 }
 ```
+
+[back to examples](#examples)
