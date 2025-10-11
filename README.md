@@ -44,7 +44,7 @@ It can be used for a wide range of use cases, such as generating valid URLs give
 
 - [Using V installer](#using-v-installer)
 
-### Using V installer
+### Using V installer
 
 In your terminal, run this command:
 
@@ -363,7 +363,7 @@ import khalyomede.url { Url }
 fn main() {
   link := Url.parse("https://example.com")
 
-  assert lunk.host == "example.com"
+  assert link.host == "example.com"
 }
 ```
 
@@ -520,7 +520,7 @@ fn main() {
 
 [back to examples](#examples)
 
-### Compare two URLs are equivalent
+### Compare two URLs are equivalent
 
 Comparing two `url` by casting them to string may lead to false positives.
 
