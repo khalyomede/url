@@ -2,7 +2,7 @@ module test
 
 import khalyomede.expect { expect }
 import khalyomede.faker { Faker }
-import url { Url, Https }
+import url { Url, Https, Http }
 
 fn test_it_returns_url_without_trailing_spaces() {
     mut fake := Faker{}
@@ -68,4 +68,33 @@ fn test_it_returns_url_with_multi_level_paths() {
     }
 
     expect(link.str()).to_be_equal_to("https://${link.host}/${path1}/${path2}")
+}
+
+fn test_it_strips_port_when_default_port_is_the_same_for_https() {
+    link := Url{
+        scheme: Https{}
+        host: "example.com"
+        port: 443
+    }
+
+    expect(link.str()).to_be_equal_to("https://example.com")
+}
+
+fn test_it_strips_port_when_default_port_is_the_same_for_http() {
+    link := Url{
+        scheme: Http{}
+        host: "example.com"
+        port: 80
+    }
+
+    expect(link.str()).to_be_equal_to("http://example.com")
+}
+
+fn test_it_outputs_no_ports_when_no_port_specified() {
+    link := Url{
+        scheme: Http{}
+        host: "example.com"
+    }
+
+    expect(link.str()).to_be_equal_to("http://example.com")
 }

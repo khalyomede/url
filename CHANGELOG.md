@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Default port are automatically stripped when converting to string (for example, 443 port is removed with Https scheme).
+
 ## [0.2.0] - 2025-09-24
 
 ### Added

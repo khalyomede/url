@@ -522,7 +522,22 @@ fn main() {
 }
 ```
 
-Note: This performs a normalized comparison since both URLs are converted to lowercase and paths are normalized. However, this may not handle all edge cases (like default ports). For those cases, you would need to manually compare the components or implement a dedicated comparison method.
+This performs a normalized comparison since both URLs are converted to lowercase and paths are normalized.
+
+Default ports are also stripped. For example, HTTPS 443 port is automatically stripped, to allow for comparison.
+
+```v
+module main
+
+import khalyomede.url { Url }
+
+fn main() {
+  first_url := Url.parse("https://example.com:443")!
+  second_url := Url.parse("https://example.com")!
+
+  assert first_url.str() == second_url.str()
+}
+```
 
 [back to examples](#examples)
 

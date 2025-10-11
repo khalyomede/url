@@ -5,7 +5,7 @@ import net.urllib { query_escape, path_escape }
 pub fn (link Url) str() string {
     mut result := "${link.scheme.str()}://${link.host}".to_lower()
 
-    if link.port != none {
+    if link.port != none && !link.default_port_matches_scheme() {
         result += ":${link.port}"
     }
 
