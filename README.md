@@ -236,7 +236,7 @@ fn main() {
     fragment: "whatsapp"
   }
 
-  assert link.str() == "https://example.com/contact-us?lang=fr&theme=dark#whatsapp"
+  assert link.str() == "https://example.com:8080/contact-us?lang=fr&theme=dark#whatsapp"
 }
 ```
 
